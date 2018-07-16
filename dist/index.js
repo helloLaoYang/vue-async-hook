@@ -48,10 +48,16 @@ var mergeArguments = function mergeArguments(target, _ref) {
   var query = _ref.query,
       params = _ref.params;
 
-  target = Object.assign({
-    query: query,
-    params: params
-  }, target);
+
+  var q = Object.assign({}, query, target.query);
+  Object.keys(q).map(function (k) {
+    target.query[k] = q[k];
+  });
+
+  var p = Object.assign({}, params, target.params);
+  Object.keys(p).map(function (k) {
+    target.params[p] = p[k];
+  });
 };
 
 //
