@@ -1,11 +1,17 @@
 
-export const setTitle = function (title = null) {
+export const setTitle = function (title = null, debug = true) {
   // 验证参数
   if (title instanceof String) {
     return
   }
   // 设置标题
   document.title = title
+  // 开启debug
+  // 在开发者模式下创建iframe会造成多次重绘
+  // 不建议关闭
+  if (debug) {
+    return
+  }
   // 兼容ios
   const $iframe = document.createElement('iframe')
   // set attribute

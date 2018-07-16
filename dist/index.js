@@ -1,5 +1,6 @@
 var setTitle = function setTitle() {
   var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  var debug = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
   // 验证参数
   if (title instanceof String) {
@@ -7,6 +8,12 @@ var setTitle = function setTitle() {
   }
   // 设置标题
   document.title = title;
+  // 开启debug
+  // 在开发者模式下创建iframe会造成多次重绘
+  // 不建议关闭
+  if (debug) {
+    return;
+  }
   // 兼容ios
   var $iframe = document.createElement('iframe');
   // set attribute
@@ -292,7 +299,9 @@ var install = function install(Vue) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   // 获取配置
-  var router = options.router,
+  var _options$debug = options.debug,
+      debug = _options$debug === undefined ? true : _options$debug,
+      router = options.router,
       store = options.store,
       _options$title = options.title,
       title = _options$title === undefined ? false : _options$title,
@@ -357,7 +366,7 @@ var install = function install(Vue) {
         var _to$meta$title = to.meta.title,
             toTitle = _to$meta$title === undefined ? null : _to$meta$title;
 
-        setTitle(toTitle);
+        setTitle(toTitle, debug);
       }
       // 调起钩子函数
       after(r);

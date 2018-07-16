@@ -26,6 +26,7 @@ let hook = function () {}
 const install = function (Vue, options = {}) {
   // 获取配置
   const {
+    debug = true,
     router,
     store,
     title = false,
@@ -73,7 +74,7 @@ const install = function (Vue, options = {}) {
       // 进行标题处理
       if (title) {
         const {title: toTitle = null} = to.meta
-        setTitle(toTitle)
+        setTitle(toTitle, debug)
       }
       // 调起钩子函数
       after(r)
