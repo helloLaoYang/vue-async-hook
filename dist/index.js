@@ -354,8 +354,8 @@ var install = function install(Vue) {
     }).finally(function (r) {
       // 进行标题处理
       if (title) {
-        var _to$mata$title = to.mata.title,
-            toTitle = _to$mata$title === undefined ? null : _to$mata$title;
+        var _to$meta$title = to.meta.title,
+            toTitle = _to$meta$title === undefined ? null : _to$meta$title;
 
         setTitle(toTitle);
       }

@@ -72,7 +72,7 @@ const install = function (Vue, options = {}) {
     }).finally(r => {
       // 进行标题处理
       if (title) {
-        const {title: toTitle = null} = to.mata
+        const {title: toTitle = null} = to.meta
         setTitle(toTitle)
       }
       // 调起钩子函数
