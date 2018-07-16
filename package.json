@@ -1,0 +1,33 @@
+{
+  "name": "vue-asynchooks",
+  "version": "0.0.1",
+  "description": "a vue2.x plugin",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "rollup -wm -c",
+    "build": "rollup -c",
+    "lint": "eslint src",
+    "flow": "flow check",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "git@github.com:helloLaoYang/vue-async-hook.git",
+  "author": "helloLaoYang <aaron@codonas.cn>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.6",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "css-loader": "^1.0.0",
+    "eslint": "^5.1.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "rollup": "^0.62.0",
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-vue": "^4.3.0",
+    "vue-template-compiler": "^2.5.16"
+  }
+}
