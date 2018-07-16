@@ -41,7 +41,7 @@ var mergeArguments = function mergeArguments(target, _ref) {
   var query = _ref.query,
       params = _ref.params;
 
-  return Object.assign({}, {
+  target = Object.assign({
     query: query,
     params: params
   }, target);

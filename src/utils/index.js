@@ -37,7 +37,7 @@ export const createProgressBar = function (Vue, ProgressBar) {
 }
 
 export const mergeArguments = function (target, {query, params}) {
-  return Object.assign({}, {
+  target = Object.assign({
     query,
     params
   }, target)
