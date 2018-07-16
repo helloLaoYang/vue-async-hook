@@ -1,9 +1,5 @@
 
-export const setTitle = function (title = null, debug = true) {
-  // 验证参数
-  if (title instanceof String) {
-    return
-  }
+export const setTitle = function (title = '', debug = true) {
   // 设置标题
   document.title = title
   // 开启debug

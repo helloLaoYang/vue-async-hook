@@ -1,11 +1,7 @@
 var setTitle = function setTitle() {
-  var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
   var debug = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-  // 验证参数
-  if (title instanceof String) {
-    return;
-  }
   // 设置标题
   document.title = title;
   // 开启debug
