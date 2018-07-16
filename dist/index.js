@@ -1,3 +1,52 @@
+var setTitle = function setTitle() {
+  var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+  // 验证参数
+  if (title instanceof String) {
+    return;
+  }
+  // 设置标题
+  document.title = title;
+  // 兼容ios
+  var $iframe = document.createElement('iframe');
+  // set attribute
+  $iframe.style.display = 'none';
+  $iframe.src = '/favicon.ico';
+  // load func
+  var load = function load() {
+    setTimeout(function () {
+      $iframe.removeEventListener('load', load);
+      document.body.removeChild($iframe);
+    }, 10);
+  };
+  // add load
+  $iframe.addEventListener('load', load);
+  // add i
+  document.body.appendChild($iframe);
+};
+
+/**
+ * 创建并返回加载条组件实例
+ * 并将其挂在至documnet.body
+ * @param {*} Vue
+ * @param {Component} ProgressBar
+ */
+var createProgressBar = function createProgressBar(Vue, ProgressBar) {
+  var bar = new Vue(ProgressBar).$mount();
+  document.body.appendChild(bar.$el);
+  return bar;
+};
+
+var mergeArguments = function mergeArguments(target, _ref) {
+  var query = _ref.query,
+      params = _ref.params;
+
+  return Object.assign({}, {
+    query: query,
+    params: params
+  }, target);
+};
+
 //
 //
 //
@@ -112,7 +161,7 @@ __vue_render__._withStripped = true;
 /* style */
 var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
   if (!inject) return;
-  inject("data-v-d916daca_0", { source: "\n.progress {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  right: 0px;\n  height: 2px;\n  width: 0%;\n  -webkit-transition: width 0.2s, opacity 0.4s;\n  -moz-transition: width 0.2s, opacity 0.4s;\n  -o-transition: width 0.2s, opacity 0.4s;\n  transition: width 0.2s, opacity 0.4s;\n  opacity: 1;\n  background-color: #efc14e;\n  z-index: 999999;\n}\n", map: { "version": 3, "sources": ["/Users/aaron/Workspace/github/vue-asynchooks/package/progress-bar.vue"], "names": [], "mappings": ";AAuFA;EACA,gBAAA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;EACA,UAAA;EACA,6CAAA;EACA,0CAAA;EACA,wCAAA;EACA,qCAAA;EACA,WAAA;EACA,0BAAA;EACA,gBAAA;CACA", "file": "progress-bar.vue", "sourcesContent": ["<template>\n  <div class=\"progress\" :style=\"{\n    'width': percent+'%',\n    'height': height,\n    'background-color': canSuccess? color : failedColor,\n    'opacity': show ? 1 : 0\n  }\"></div>\n</template>\n\n<script>\nexport default {\n  data () {\n    return {\n      percent: 0,\n      show: false,\n      canSuccess: true,\n      duration: 3000,\n      height: '2px',\n      color: 'green',\n      failedColor: 'red'\n    }\n  },\n  methods: {\n    start () {\n      this.show = true\n      this.canSuccess = true\n      if (this.$timer) {\n        clearInterval(this.$timer)\n        this.percent = 0\n      }\n      this.$cut = 10000 / Math.floor(this.duration)\n      this.$timer = setInterval(() => {\n        this.increase(this.$cut * Math.random())\n        if (this.percent > 95) {\n          this.finish()\n        }\n      }, 100)\n      return this\n    },\n    set (num) {\n      this.show = true\n      this.canSuccess = true\n      this.percent = Math.floor(num)\n      return this\n    },\n    get () {\n      return Math.floor(this.percent)\n    },\n    increase (num) {\n      this.percent = this.percent + Math.floor(num)\n      return this\n    },\n    decrease (num) {\n      this.percent = this.percent - Math.floor(num)\n      return this\n    },\n    finish () {\n      this.percent = 100\n      this.hide()\n      return this\n    },\n    pause () {\n      clearInterval(this.$timer)\n      return this\n    },\n    hide () {\n      clearInterval(this.$timer)\n      this.$timer = null\n      setTimeout(() => {\n        this.show = false\n        this.$nextTick(() => {\n          setTimeout(() => {\n            this.percent = 0\n          }, 200)\n        })\n      }, 500)\n      return this\n    },\n    fail () {\n      this.canSuccess = false\n      return this\n    }\n  }\n}\n</script>\n\n<style>\n.progress {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  right: 0px;\n  height: 2px;\n  width: 0%;\n  -webkit-transition: width 0.2s, opacity 0.4s;\n  -moz-transition: width 0.2s, opacity 0.4s;\n  -o-transition: width 0.2s, opacity 0.4s;\n  transition: width 0.2s, opacity 0.4s;\n  opacity: 1;\n  background-color: #efc14e;\n  z-index: 999999;\n}\n</style>\n"] }, media: undefined });
+  inject("data-v-49756e96_0", { source: "\n.progress {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  right: 0px;\n  height: 2px;\n  width: 0%;\n  -webkit-transition: width 0.2s, opacity 0.4s;\n  -moz-transition: width 0.2s, opacity 0.4s;\n  -o-transition: width 0.2s, opacity 0.4s;\n  transition: width 0.2s, opacity 0.4s;\n  opacity: 1;\n  background-color: #efc14e;\n  z-index: 999999;\n}\n", map: { "version": 3, "sources": ["/Users/aaron/Workspace/github/vue-async-hook/src/components/progress-bar.vue"], "names": [], "mappings": ";AAuFA;EACA,gBAAA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;EACA,UAAA;EACA,6CAAA;EACA,0CAAA;EACA,wCAAA;EACA,qCAAA;EACA,WAAA;EACA,0BAAA;EACA,gBAAA;CACA", "file": "progress-bar.vue", "sourcesContent": ["<template>\n  <div class=\"progress\" :style=\"{\n    'width': percent+'%',\n    'height': height,\n    'background-color': canSuccess? color : failedColor,\n    'opacity': show ? 1 : 0\n  }\"></div>\n</template>\n\n<script>\nexport default {\n  data () {\n    return {\n      percent: 0,\n      show: false,\n      canSuccess: true,\n      duration: 3000,\n      height: '2px',\n      color: 'green',\n      failedColor: 'red'\n    }\n  },\n  methods: {\n    start () {\n      this.show = true\n      this.canSuccess = true\n      if (this.$timer) {\n        clearInterval(this.$timer)\n        this.percent = 0\n      }\n      this.$cut = 10000 / Math.floor(this.duration)\n      this.$timer = setInterval(() => {\n        this.increase(this.$cut * Math.random())\n        if (this.percent > 95) {\n          this.finish()\n        }\n      }, 100)\n      return this\n    },\n    set (num) {\n      this.show = true\n      this.canSuccess = true\n      this.percent = Math.floor(num)\n      return this\n    },\n    get () {\n      return Math.floor(this.percent)\n    },\n    increase (num) {\n      this.percent = this.percent + Math.floor(num)\n      return this\n    },\n    decrease (num) {\n      this.percent = this.percent - Math.floor(num)\n      return this\n    },\n    finish () {\n      this.percent = 100\n      this.hide()\n      return this\n    },\n    pause () {\n      clearInterval(this.$timer)\n      return this\n    },\n    hide () {\n      clearInterval(this.$timer)\n      this.$timer = null\n      setTimeout(() => {\n        this.show = false\n        this.$nextTick(() => {\n          setTimeout(() => {\n            this.percent = 0\n          }, 200)\n        })\n      }, 500)\n      return this\n    },\n    fail () {\n      this.canSuccess = false\n      return this\n    }\n  }\n}\n</script>\n\n<style>\n.progress {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  right: 0px;\n  height: 2px;\n  width: 0%;\n  -webkit-transition: width 0.2s, opacity 0.4s;\n  -moz-transition: width 0.2s, opacity 0.4s;\n  -o-transition: width 0.2s, opacity 0.4s;\n  transition: width 0.2s, opacity 0.4s;\n  opacity: 1;\n  background-color: #efc14e;\n  z-index: 999999;\n}\n</style>\n"] }, media: undefined });
 };
 /* scoped */
 var __vue_scope_id__ = undefined;
@@ -125,7 +174,7 @@ function __vue_normalize__(template, style, script$$1, scope, functional, module
   var component = (typeof script$$1 === 'function' ? script$$1.options : script$$1) || {};
 
   {
-    component.__file = "/Users/aaron/Workspace/github/vue-asynchooks/package/progress-bar.vue";
+    component.__file = "/Users/aaron/Workspace/github/vue-async-hook/src/components/progress-bar.vue";
   }
 
   if (!component.render) {
@@ -224,21 +273,10 @@ var progressBar = __vue_normalize__({ render: __vue_render__, staticRenderFns: _
  * 用于vue spa应用数据预加载
  * @使用vue-router全局钩子，对数据进行预加载。
  * @对reject进行特殊处理
- * @提供一个加载条组件
+ * @提供设置标题的方法
+ * @提供合并路由参数的功能
  * @提供两个钩子: before,after
  */
-
-/**
- * 创建并返回加载条组件实例
- * 并将其挂在至documnet.body
- * @param {*} Vue
- * @param {Component} ProgressBar
- */
-var createProgressBar = function createProgressBar(Vue, ProgressBar) {
-  var bar = new Vue(ProgressBar).$mount();
-  document.body.appendChild(bar.$el);
-  return bar;
-};
 
 /**
  * 移除钩子函数
@@ -253,25 +291,30 @@ var hook = function hook() {};
 var install = function install(Vue) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-
   // 获取配置
   var router = options.router,
       store = options.store,
+      _options$title = options.title,
+      title = _options$title === undefined ? false : _options$title,
+      _options$merge = options.merge,
+      merge = _options$merge === undefined ? false : _options$merge,
       _options$loading = options.loading,
       loading = _options$loading === undefined ? progressBar : _options$loading,
       _options$before = options.before,
       before = _options$before === undefined ? function () {} : _options$before,
       _options$after = options.after,
       after = _options$after === undefined ? function () {} : _options$after;
-
   // 创建加载条
 
   var bar = Vue.prototype.$bar = createProgressBar(Vue, loading);
-
   // 添加全局钩子
   hook = router.beforeResolve(function (to, from, next) {
     // 调起before
     before(to, from);
+    // 进行参数合并
+    if (merge) {
+      mergeArguments(to, from);
+    }
     // 开启加载条
     bar.start();
     // 抓取当前路由的全部组件
@@ -289,7 +332,8 @@ var install = function install(Vue) {
       var asyncData = _ref.asyncData;
       return asyncData && asyncData({
         route: to,
-        store: store
+        store: store,
+        bar: bar
       });
     });
     // 筛选执行钩子集
@@ -299,28 +343,38 @@ var install = function install(Vue) {
     }).catch(function (_ref2) {
       var _ref2$error = _ref2.error,
           error = _ref2$error === undefined ? false : _ref2$error,
-          _ref2$url = _ref2.url,
-          url = _ref2$url === undefined ? to : _ref2$url;
+          url = _ref2.url;
 
       bar.fail().finish();
       // 错误处理
-      if (error) {
+      if (error && url) {
         router.replace(url);
       }
       next();
     }).finally(function (r) {
-      return after(r);
+      // 进行标题处理
+      if (title) {
+        var _to$mata$title = to.mata.title,
+            toTitle = _to$mata$title === undefined ? null : _to$mata$title;
+
+        setTitle(toTitle);
+      }
+      // 调起钩子函数
+      after(r);
     });
   });
 };
 
+// export set title
+var title = setTitle;
+
+// export default
 var index = {
   install: install,
   delete: function _delete() {
     hook();
-  },
-
-  ProgressBar: progressBar
+  }
 };
 
 export default index;
+export { title };

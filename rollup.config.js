@@ -2,7 +2,7 @@ import babel from 'rollup-plugin-babel'
 import VuePlugin from 'rollup-plugin-vue'
 
 export default [{
-  input: 'package/progress-bar.vue',
+  input: 'src/components/progress-bar.vue',
   output: {
     file: 'src/components/progress-bar.js',
     format: 'es'
