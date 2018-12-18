@@ -1,61 +1,3 @@
-var setTitle = function setTitle() {
-  var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-  var debug = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-  // 设置标题
-  document.title = title;
-  // 开启debug
-  // 在开发者模式下创建iframe会造成多次重绘
-  // 不建议关闭
-  if (debug) {
-    return;
-  }
-  // 兼容ios
-  var $iframe = document.createElement('iframe');
-  // set attribute
-  $iframe.style.display = 'none';
-  $iframe.src = '/favicon.ico';
-  // load func
-  var load = function load() {
-    setTimeout(function () {
-      $iframe.removeEventListener('load', load);
-      document.body.removeChild($iframe);
-    }, 10);
-  };
-  // add load
-  $iframe.addEventListener('load', load);
-  // add i
-  document.body.appendChild($iframe);
-};
-
-/**
- * 创建并返回加载条组件实例
- * 并将其挂在至documnet.body
- * @param {*} Vue
- * @param {Component} ProgressBar
- */
-var createProgressBar = function createProgressBar(Vue, ProgressBar) {
-  var bar = new Vue(ProgressBar).$mount();
-  document.body.appendChild(bar.$el);
-  return bar;
-};
-
-var mergeArguments = function mergeArguments(target, _ref) {
-  var query = _ref.query,
-      params = _ref.params;
-
-
-  var q = Object.assign({}, query, target.query);
-  Object.keys(q).map(function (k) {
-    target.query[k] = q[k];
-  });
-
-  var p = Object.assign({}, params, target.params);
-  Object.keys(p).map(function (k) {
-    target.params[p] = p[k];
-  });
-};
-
 //
 //
 //
@@ -278,114 +220,104 @@ function __vue_create_injector__() {
 
 var progressBar = __vue_normalize__({ render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ }, __vue_inject_styles__, __vue_script__, __vue_scope_id__, __vue_is_functional_template__, __vue_module_identifier__, __vue_create_injector__, undefined);
 
-/*! file
+var setTitle = function setTitle(vm) {
+  var title = vm.$options.title;
+
+  if (title) {
+    document.title = typeof title === 'function' ? title.call(vm) : title;
+  }
+};
+
+var createProgressBar = function createProgressBar(Vue, ProgressBar) {
+  var bar = new Vue(ProgressBar).$mount();
+  document.body.appendChild(bar.$el);
+  return bar;
+};
+
+/*! 
  * 用于vue spa应用数据预加载
- * @使用vue-router全局钩子，对数据进行预加载。
- * @对reject进行特殊处理
- * @提供设置标题的方法
- * @提供合并路由参数的功能
- * @提供两个钩子: before,after
+ * 
+ * @author: helloLaoYang
+ * 
  */
 
-/**
- * 移除钩子函数
- * 只需要执行，便可以移除钩子
- * 此功能只能在vue-router@2.5.0+使用
- */
-var hook = function hook() {};
-
-/**
- * 插件安装函数
- */
 var install = function install(Vue) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-  // 获取配置
-  var _options$debug = options.debug,
-      debug = _options$debug === undefined ? true : _options$debug,
-      router = options.router,
+  var router = options.router,
       store = options.store,
-      _options$title = options.title,
-      title = _options$title === undefined ? false : _options$title,
-      _options$merge = options.merge,
-      merge = _options$merge === undefined ? false : _options$merge,
       _options$loading = options.loading,
-      loading = _options$loading === undefined ? progressBar : _options$loading,
-      _options$before = options.before,
-      before = _options$before === undefined ? function () {} : _options$before,
-      _options$after = options.after,
-      after = _options$after === undefined ? function () {} : _options$after;
-  // 创建加载条
+      loading = _options$loading === undefined ? progressBar : _options$loading;
+
+  // create loading bar
 
   var bar = Vue.prototype.$bar = createProgressBar(Vue, loading);
-  // 添加全局钩子
-  hook = router.beforeResolve(function (to, from, next) {
-    // 调起before
-    before(to, from);
-    // 进行参数合并
-    if (merge) {
-      mergeArguments(to, from);
-    }
-    // 开启加载条
+
+  // add lanuch hook
+  router.beforeResolve(function (to, from, next) {
     bar.start();
-    // 抓取当前路由的全部组件
     var matched = router.getMatchedComponents(to);
-    // 抓取上一次路由的全部组件
     var prevMatched = router.getMatchedComponents(from);
-    // 组件筛查
     var hooks = matched.filter(function (c) {
       return prevMatched.findIndex(function (_) {
         return _ === c;
       });
     });
-    // 处理组件asyn钩子进行
     var asyncHooks = hooks.map(function (_ref) {
       var asyncData = _ref.asyncData;
       return asyncData && asyncData({
         route: to,
         store: store,
-        bar: bar
+        bar: bar,
+        isRender: true
       });
     });
-    // 筛选执行钩子集
     Promise.all(asyncHooks).then(function () {
       bar.finish();
       next();
     }).catch(function (_ref2) {
-      var _ref2$error = _ref2.error,
-          error = _ref2$error === undefined ? false : _ref2$error,
-          url = _ref2.url;
+      var route = _ref2.route;
 
-      bar.fail().finish();
-      // 错误处理
-      if (error && url) {
-        router.replace(url);
+      bar.fail();
+      bar.finish();
+      if (route) {
+        router.replace(route);
       }
       next();
-    }).finally(function (r) {
-      // 进行标题处理
-      if (title) {
-        var _to$meta$title = to.meta.title,
-            toTitle = _to$meta$title === undefined ? null : _to$meta$title;
-
-        setTitle(toTitle, debug);
-      }
-      // 调起钩子函数
-      after(r);
     });
+  });
+
+  // add update hook
+  Vue.mixin({
+    beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
+      var _this = this;
+
+      var _$options$asyncData = this.$options.asyncData,
+          asyncData = _$options$asyncData === undefined ? function () {} : _$options$asyncData;
+
+      Promise.all([asyncData({
+        route: to,
+        from: from,
+        store: store,
+        bar: bar,
+        isRender: false
+      })]).then(function (r) {
+        setTitle(_this);
+        next();
+      }).catch(function (_ref3) {
+        var route = _ref3.route;
+
+        if (route) {
+          router.replace(route);
+        }
+        setTitle(_this);
+        next();
+      });
+    }
   });
 };
 
-// export set title
-var title = setTitle;
-
-// export default
 var index = {
-  install: install,
-  delete: function _delete() {
-    hook();
-  }
+  install: install
 };
 
 export default index;
-export { title };

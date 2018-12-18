@@ -6,12 +6,6 @@
 
 - 支持异步组件
 
-# Tips
-
-- `delete`方法只适应于vue-router@2.5.0+。
-
-- `options[router]`必须为vue-router实例。
-
 # Usage
 
 - 安装依赖
@@ -19,10 +13,10 @@
 ```bash
 # install
 npm install --save vue-async-hook
+
 # or
 yarn add vue-async-hook
-# or
-yarn add https://github.com/helloLaoYang/vue-async-hook.git
+
 ```
 
 - 插件使用
@@ -38,17 +32,6 @@ Vue.use(VueAsyncHook, {
 
 ```
 
-- 移除钩子
-
-```javascript
-
-import VueAsyncHook from 'vue-async-hook'
-
-const {delete} = VueAsyncHook
-
-delete()
-
-```
 
 # Options
 
@@ -60,14 +43,9 @@ delete()
 
 > vuex实例，将会被加入`asyncData(context)`。
 
-- `options[before]`
+- `options[loading]`
 
-> 处理asyncData之前被执行的钩子。
-
-- `options[after]`
-
-> asyncData处理完全之后执行的钩子。
-
+> 自定义加载过渡组件, 必需包含[`start`, `fail`, `finish`]三个函数
 
 # asyncData([context])
 
@@ -75,17 +53,24 @@ delete()
 
 - context[store] 组件安装时传入的vuex实例
 
+- context[bar] 加载进度组件，可自己调节进度样式
+
+- context[isRender] 是否为加载期
+
+- context[from] 来源路由，`isRender`为`true`时为空
+
 # 错误处理
 
-> 请抛出一个错误的Promise实例，如果抛出的错误中含有url以及error为true，则会进行路由拦截跳转。
+> 请抛出一个错误的Promise实例，如果抛出的错误中含有routeConfig，则会进行路由拦截跳转。
 
 
 ```js
 export default {
   asyncData () {
     return Promise.reject({
-      error: true,
-      url: '/404'
+      route: {
+        name: 'NotFind'
+      }
     })
   }
 }
@@ -93,8 +78,9 @@ export default {
 export default {
   sasyncData () {
     const err = new Error('error msg')
-    err.error = true
-    err.url = '/404'
+    err.route = {
+      name: 'NotFind'
+    }
     return Promise.reject(err)
   }
 }
