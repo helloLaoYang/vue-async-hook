@@ -278,16 +278,11 @@ var install = function install(Vue) {
         bar: bar,
         isRender: true
       });
-    })).then(function (_ref) {
-      var redirect = _ref.redirect;
-
-      if (redirect) {
-        router.replace(redirect);
-      }
+    })).then(function () {
       bar.finish();
       next();
-    }).catch(function (_ref2) {
-      var redirect = _ref2.redirect;
+    }).catch(function (_ref) {
+      var redirect = _ref.redirect;
 
       if (redirect) {
         router.replace(redirect);
@@ -300,12 +295,19 @@ var install = function install(Vue) {
 
   // add update hook
   Vue.mixin({
+    mounted: function mounted() {
+      setTitle(this);
+    },
     beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
       var _this = this;
 
-      var _$options$asyncData = this.$options.asyncData,
-          asyncData = _$options$asyncData === undefined ? function () {} : _$options$asyncData;
+      var asyncData = this.$options.asyncData;
 
+      if (!(asyncData instanceof Function)) {
+        next();
+        return;
+      }
+      bar.start();
       Promise.all([asyncData({
         route: to,
         from: from,
@@ -315,15 +317,7 @@ var install = function install(Vue) {
       })]).then(function (r) {
         setTitle(_this);
         next();
-      }).catch(function (_ref3) {
-        var route = _ref3.route;
-
-        if (route) {
-          router.replace(route);
-        }
-        setTitle(_this);
-        next();
-      });
+      }).catch(next);
     }
   });
 };

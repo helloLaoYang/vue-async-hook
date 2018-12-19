@@ -1,6 +1,6 @@
 {
   "name": "vue-async-hook",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a vue2.x plugin",
   "main": "dist/index.js",
   "scripts": {

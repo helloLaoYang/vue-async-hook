@@ -35,10 +35,7 @@ const install = function (Vue, options = {}) {
       route: to,
       bar,
       isRender: true
-    }))).then(({ redirect }) => {
-        if (redirect) {
-          router.replace(redirect)
-        }
+    }))).then(() => {
         bar.finish()
         next()
       }).catch(({ redirect }) => {
@@ -55,8 +52,16 @@ const install = function (Vue, options = {}) {
 
   // add update hook
   Vue.mixin({
+    mounted () {
+      setTitle(this)
+    },
     beforeRouteUpdate (to, from, next) {
-      const { asyncData = function () {} } = this.$options
+      const { asyncData } = this.$options
+      if (!(asyncData instanceof Function)) {
+        next()
+        return
+      }
+      bar.start()
       Promise.all([
         asyncData({
           route: to,
@@ -68,16 +73,9 @@ const install = function (Vue, options = {}) {
       ]).then(r => {
         setTitle(this)
         next()
-      }).catch(({ route }) => {
-        if (route) {
-          router.replace(route)
-        }
-        setTitle(this)
-        next()
-      })
+      }).catch(next)
     }
   })
-
 }
 
 export default {
