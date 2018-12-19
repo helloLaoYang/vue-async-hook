@@ -278,14 +278,16 @@ var install = function install(Vue) {
         bar: bar,
         isRender: true
       });
-    })).then(function () {
+    })).then(function (_ref) {
+      var redirect = _ref.redirect;
+
       if (redirect) {
         router.replace(redirect);
       }
       bar.finish();
       next();
-    }).catch(function (_ref) {
-      var redirect = _ref.redirect;
+    }).catch(function (_ref2) {
+      var redirect = _ref2.redirect;
 
       if (redirect) {
         router.replace(redirect);
@@ -313,8 +315,8 @@ var install = function install(Vue) {
       })]).then(function (r) {
         setTitle(_this);
         next();
-      }).catch(function (_ref2) {
-        var route = _ref2.route;
+      }).catch(function (_ref3) {
+        var route = _ref3.route;
 
         if (route) {
           router.replace(route);

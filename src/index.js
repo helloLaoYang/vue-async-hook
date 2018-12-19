@@ -35,7 +35,7 @@ const install = function (Vue, options = {}) {
       route: to,
       bar,
       isRender: true
-    }))).then(() => {
+    }))).then(({ redirect }) => {
         if (redirect) {
           router.replace(redirect)
         }
