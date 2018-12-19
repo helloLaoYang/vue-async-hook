@@ -17,27 +17,38 @@ const install = function (Vue, options = {}) {
 
   // add lanuch hook
   router.beforeResolve(function (to, from, next) {
-    bar.start()
     const matched = router.getMatchedComponents(to)
     const prevMatched = router.getMatchedComponents(from)
-    const hooks = matched.filter(c => prevMatched.findIndex(_ => _ === c))
-    const asyncHooks = hooks.map(({asyncData}) => asyncData && asyncData({
-      route: to,
+    let diffed = false
+    const activated = matched.filter((c, i) => {
+      return diffed || (diffed = (prevMatched[i] !== c))
+    })
+    const asyncDataHooks = activated.map(c => c.asyncData).filter(_ => _)
+    if (!asyncDataHooks.length) {
+      return next()
+    }
+
+    bar.start()
+    Promise.all(asyncDataHooks.map(hook => hook({
       store,
+      from,
+      route: to,
       bar,
       isRender: true
-    }))
-    Promise.all(asyncHooks).then(() => {
-      bar.finish()
-      next()
-    }).catch(({ route }) => {
-      bar.fail()
-      bar.finish()
-      if (route) {
-        router.replace(route)
-      }
-      next()
-    })
+    }))).then(() => {
+        if (redirect) {
+          router.replace(redirect)
+        }
+        bar.finish()
+        next()
+      }).catch(({ redirect }) => {
+        if (redirect) {
+          router.replace(redirect)
+        }
+        bar.fail()
+        bar.finish()
+        next()
+      })
   })
 
 

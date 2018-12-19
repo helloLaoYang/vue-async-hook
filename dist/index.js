@@ -254,34 +254,44 @@ var install = function install(Vue) {
 
   // add lanuch hook
   router.beforeResolve(function (to, from, next) {
-    bar.start();
     var matched = router.getMatchedComponents(to);
     var prevMatched = router.getMatchedComponents(from);
-    var hooks = matched.filter(function (c) {
-      return prevMatched.findIndex(function (_) {
-        return _ === c;
-      });
+    var diffed = false;
+    var activated = matched.filter(function (c, i) {
+      return diffed || (diffed = prevMatched[i] !== c);
     });
-    var asyncHooks = hooks.map(function (_ref) {
-      var asyncData = _ref.asyncData;
-      return asyncData && asyncData({
-        route: to,
+    var asyncDataHooks = activated.map(function (c) {
+      return c.asyncData;
+    }).filter(function (_) {
+      return _;
+    });
+    if (!asyncDataHooks.length) {
+      return next();
+    }
+
+    bar.start();
+    Promise.all(asyncDataHooks.map(function (hook) {
+      return hook({
         store: store,
+        from: from,
+        route: to,
         bar: bar,
         isRender: true
       });
-    });
-    Promise.all(asyncHooks).then(function () {
+    })).then(function () {
+      if (redirect) {
+        router.replace(redirect);
+      }
       bar.finish();
       next();
-    }).catch(function (_ref2) {
-      var route = _ref2.route;
+    }).catch(function (_ref) {
+      var redirect = _ref.redirect;
 
+      if (redirect) {
+        router.replace(redirect);
+      }
       bar.fail();
       bar.finish();
-      if (route) {
-        router.replace(route);
-      }
       next();
     });
   });
@@ -303,8 +313,8 @@ var install = function install(Vue) {
       })]).then(function (r) {
         setTitle(_this);
         next();
-      }).catch(function (_ref3) {
-        var route = _ref3.route;
+      }).catch(function (_ref2) {
+        var route = _ref2.route;
 
         if (route) {
           router.replace(route);
